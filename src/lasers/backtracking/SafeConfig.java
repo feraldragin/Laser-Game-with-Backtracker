@@ -21,8 +21,8 @@ import java.util.Scanner;
 public class SafeConfig implements Configuration {
 
     private String[][] safeArray;
-    private int COLDIM;
-    private int ROWDIM;
+    private static int COLDIM;
+    private static int ROWDIM;
     private int row;
     private int col;
 
@@ -55,7 +55,7 @@ public class SafeConfig implements Configuration {
     private SafeConfig(SafeConfig other){
         this.row = other.row;
         this.col = other.col;
-        if (this.col == COLDIM-1){
+        if (this.col == other.COLDIM-1){
             this.row+=1;
             this.col = 0;
         }
@@ -78,9 +78,11 @@ public class SafeConfig implements Configuration {
         if (this.row == this.ROWDIM-1 && this.col == this.COLDIM-1){
             return successors;
         }
-        SafeConfig Lconfig = new SafeConfig(this);
-        Lconfig.safeArray[this.row][this.col] = "L";
-        successors.add(Lconfig);
+        if (!Character.isDigit(this.safeArray[this.row][this.col].charAt(0)) || this.safeArray[this.row][this.col].equals("X")){
+            SafeConfig Lconfig = new SafeConfig(this);
+            Lconfig.safeArray[this.row][this.col] = "L";
+            successors.add(Lconfig);
+        }
         SafeConfig defConfig = new SafeConfig(this);
         successors.add(defConfig);
         return successors;
@@ -89,7 +91,56 @@ public class SafeConfig implements Configuration {
     @Override
     public boolean isValid() {
         // TODO
-        return false;
+
+            //creates temporary row and column variables
+            int row1 = this.row;
+            int row2 = this.row;
+            int column1 = this.col;
+            int column2 = this.col;
+            //checks if two lasers cross
+            while (row1 >= 1) {
+                row1 -= 1;
+                //breaks if there's a number
+                if (Character.isDigit(this.safeArray[row1][this.col].charAt(0)) || safeArray[row1][this.col].equals("X")){
+                    break;
+                }
+                else if (this.safeArray[row1][this.col].equals("L")) {
+                    //breaks the for loop
+                    return false;
+                }
+            }
+            //checks if two lasers cross
+            while (row2 < this.safeArray[0].length - 1) {
+                row2++;
+                if (Character.isDigit(this.safeArray[row2][this.col].charAt(0)) || safeArray[row2][this.col].equals("X")){
+                    break;
+                }
+                else if (this.safeArray[row2][this.col].equals("L")) {
+                    return false;
+                }
+            }
+            //checks if two lasers cross
+            while (column1 >= 1) {
+                column1 -= 1;
+                if (Character.isDigit(this.safeArray[this.row][column1].charAt(0)) || this.safeArray[this.row][column1].equals("X")){
+                    break;
+                }
+                else if (this.safeArray[this.row][column1].equals("L")) {
+                    return false;
+                }
+            }
+            //checks if two lasers cross
+            while (column2 < this.safeArray.length - 1) {
+                column2++;
+                if (Character.isDigit(this.safeArray[this.row][column2].charAt(0)) || this.safeArray[row][column2].equals("X")){
+                    break;
+                }
+                else if (this.safeArray[this.row][column2].equals("L")) {
+                    return false;
+                }
+            }
+
+        return true;
     }
 
     @Override

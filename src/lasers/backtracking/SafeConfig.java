@@ -1,5 +1,7 @@
 package lasers.backtracking;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
@@ -18,21 +20,34 @@ import java.util.Scanner;
  */
 public class SafeConfig implements Configuration {
 
-    private int[][] safeArray;
-    private static int ROWDIM;
-    private static int COLDIM;
+    private String[][] safeArray;
+    private int COLDIM;
+    private int ROWDIM;
     private int row;
     private int col;
 
-    public SafeConfig(String filename) {
+    public SafeConfig(String filename) throws FileNotFoundException {
         // TODO
-        Scanner in = new Scanner(filename);
-        ROWDIM = in.nextInt();
-        COLDIM = in.nextInt();
-        this.safeArray = new int[ROWDIM][COLDIM];
-        for (int row=0; row<ROWDIM; ++row) {
-            for (int col=0; col<COLDIM; ++col) {
-                this.safeArray[row][col] = in.nextInt();
+        int lines = 0;
+        Scanner in = new Scanner(new File(filename));
+        String first = in.nextLine();
+        //splits the file
+        String[] dim = first.split(" ");
+        //creates rows and columns from each line
+        ROWDIM = Integer.parseInt(dim[0]);
+        COLDIM = Integer.parseInt(dim[1]);
+        //adds the rows and columns to an array
+        safeArray = new String[ROWDIM][COLDIM];
+        //does the same while the file still has lines
+        while (in.hasNextLine()) {
+            String line = in.nextLine();
+            lines++;
+            String[] parts = line.split(" ");
+            if (parts[0].isEmpty()) {
+                break;
+            }
+            for (int i = 0; i < COLDIM; i++) {
+                safeArray[lines - 1][i] = parts[i];
             }
         }
     }
@@ -48,7 +63,7 @@ public class SafeConfig implements Configuration {
             this.col = other.col + 1;
             this.row = other.row;
         }
-        this.safeArray = new int[ROWDIM][COLDIM];
+        this.safeArray = new String[ROWDIM][COLDIM];
         for (int row = 0; row < other.ROWDIM; row++) {
             for (int col = 0; col < other.COLDIM; col++) {
                 this.safeArray[row][col] = other.safeArray[row][col];

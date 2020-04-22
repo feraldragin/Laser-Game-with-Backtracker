@@ -52,7 +52,7 @@ public class SafeConfig implements Configuration {
         }
     }
 
-    public SafeConfig(SafeConfig other){
+    private SafeConfig(SafeConfig other){
         this.row = other.row;
         this.col = other.col;
         if (this.col == COLDIM-1){
@@ -63,7 +63,7 @@ public class SafeConfig implements Configuration {
             this.col = other.col + 1;
             this.row = other.row;
         }
-        this.safeArray = new String[ROWDIM][COLDIM];
+        this.safeArray = new String[other.ROWDIM][other.COLDIM];
         for (int row = 0; row < other.ROWDIM; row++) {
             for (int col = 0; col < other.COLDIM; col++) {
                 this.safeArray[row][col] = other.safeArray[row][col];
@@ -75,10 +75,15 @@ public class SafeConfig implements Configuration {
     public Collection<Configuration> getSuccessors() {
         // TODO
         ArrayList<Configuration> successors = new ArrayList<>();
-        if (this.row == this.ROWDIM){
+        if (this.row == this.ROWDIM-1 && this.col == this.COLDIM-1){
             return successors;
         }
-        return null;
+        SafeConfig Lconfig = new SafeConfig(this);
+        Lconfig.safeArray[this.row][this.col] = "L";
+        successors.add(Lconfig);
+        SafeConfig defConfig = new SafeConfig(this);
+        successors.add(defConfig);
+        return successors;
     }
 
     @Override

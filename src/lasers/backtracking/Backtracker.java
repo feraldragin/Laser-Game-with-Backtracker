@@ -1,8 +1,8 @@
 package lasers.backtracking;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import javafx.scene.Node;
+
+import java.util.*;
 
 /**
  * This class represents the classic recursive backtracking algorithm.
@@ -82,6 +82,24 @@ public class Backtracker {
      */
     public List<Configuration> solveWithPath(Configuration current) {
         // TODO
-        return new ArrayList<>();  // change this
+        List<Configuration> path = new LinkedList<Configuration>();
+        if (current.isGoal()){
+            path.add(0, current);
+            return path;
+        }
+        else{
+            for (Configuration config : current.getSuccessors()){
+                if (config.isValid()){
+                    path.add(config);
+                    path = solveWithPath(config);
+
+                    if (path.size()> 0){
+                        path.add(0, config);
+                        return path;
+                    }
+                }
+            }
+        }
+        return path;  // change this
     }
 }

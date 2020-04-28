@@ -2,7 +2,6 @@ package lasers.backtracking;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +26,6 @@ public class SafeConfig implements Configuration {
     private static int ROWDIM;
     private int row;
     private int col;
-    private static int counter;
 
     public SafeConfig(String filename) throws FileNotFoundException {
         // TODO
@@ -55,10 +53,12 @@ public class SafeConfig implements Configuration {
         this.col = -1;
     }
 
+    //copy constructor
     private SafeConfig(SafeConfig other){
         this.row = other.row;
         this.col = other.col;
-//        System.out.println(this.row + ", " + this.col);
+
+        //moves the cursor throughout the board
         if (this.col == COLDIM-1){
             this.row+=1;
             this.col = 0;
@@ -67,31 +67,29 @@ public class SafeConfig implements Configuration {
             this.col = other.col+1;
             this.row = other.row;
         }
+        //copies the board
         this.safeArray = new String[ROWDIM][COLDIM];
         for (int row = 0; row < ROWDIM; row++) {
             this.safeArray[row] = Arrays.copyOf(other.safeArray[row], COLDIM);
         }
-        counter=counter+1;
-//        System.out.println(this.row + ", " + this.col);
-
-        //System.out.println(counter);
 
     }
 
+    //creates multiple configs
     @Override
     public Collection<Configuration> getSuccessors() {
-        // TODO
-//        System.out.println(this.row + ", " + this.col);
+        //checks to make sure there isn't a config with a negative of column
         if (col == -1){
             col++;
         }
+        //creates a default config
         SafeConfig defConfig = new SafeConfig(this);
-        //System.out.println(this.row + ", " + this.col);
         ArrayList<Configuration> successors = new ArrayList<>();
+
         if (this.row == ROWDIM-1 && this.col == COLDIM-1){
             return successors;
         }
-        //for (int col = 0; col < COLDIM; col++) {
+            //creates a config with a laser
             SafeConfig Lconfig = new SafeConfig(this);
             if (!Character.isDigit(Lconfig.safeArray[Lconfig.row][Lconfig.col].charAt(0)) && !Lconfig.safeArray[Lconfig.row][Lconfig.col].equals("X")){
 
@@ -145,22 +143,20 @@ public class SafeConfig implements Configuration {
                                 break;
                             }
                         }
+                            //adds the config to the array list
                             successors.add(Lconfig);
-                        //System.out.println(Lconfig.row + ", " + Lconfig.col);
-
 
                 }
-                //}
+        //adds the config to the array list
         successors.add(defConfig);
-        //System.out.println(defConfig.row + ", " + defConfig.col);
 
         return successors;
 
     }
 
+    //makes sure the index is valid
     @Override
     public boolean isValid() {
-        // TODO
         if (this.safeArray[this.row][this.col].equals("L")) {
             //creates temporary row and column variables
             int row1 = this.row;
@@ -207,6 +203,7 @@ public class SafeConfig implements Configuration {
             }
         }
 
+        //makes sure the board is valid at the end
         if (this.row == ROWDIM-1 && this.col == COLDIM-1) {
             for (int rows = 0; rows < this.safeArray.length; rows++) {
                 for (int columns = 0; columns < this.safeArray[rows].length; columns++) {
@@ -231,9 +228,10 @@ public class SafeConfig implements Configuration {
         return true;
     }
 
+    //makes sure the whole board is valid
     @Override
     public boolean isGoal() {
-        // TODO
+        //checks if the cursor is at the end of the board
         if (this.row == ROWDIM-1 && this.col == COLDIM-1){
             return true;
         }
@@ -348,11 +346,10 @@ public class SafeConfig implements Configuration {
         return laserCount;
     }
 
+    //prints out the board
     @Override
     public String toString(){
-        //prints the number of columns
         String result = "\n  ";
-        //prints the number of rows
         for (int column = 0; column < safeArray[0].length; column++){
             result+=column + " ";
         }
@@ -369,7 +366,7 @@ public class SafeConfig implements Configuration {
             }
             result+="\n";
         }
-        return result;
+        return result + "Cursor: " + this.row + ", " + this.col + "\n";
     }
 
     public boolean laserCheck(int rows, int columns){

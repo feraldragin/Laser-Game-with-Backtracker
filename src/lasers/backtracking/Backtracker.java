@@ -81,13 +81,14 @@ public class Backtracker {
      * If there are none, return null.
      */
     public List<Configuration> solveWithPath(Configuration current) {
-        // TODO
+
         List<Configuration> path = new LinkedList<Configuration>();
         if (current.isGoal()){
             path.add(0, current);
             return path;
         }
         else{
+            //adds all valid configs to list and then returns the path
             for (Configuration config : current.getSuccessors()){
                 if (config.isValid()){
                     path.add(config);
@@ -100,6 +101,6 @@ public class Backtracker {
                 }
             }
         }
-        return path;  // change this
+        return path;
     }
 }
